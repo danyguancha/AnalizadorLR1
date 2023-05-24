@@ -524,8 +524,8 @@ class AnalizadorLR1:
         for p in self.entradasTabla:
             tabla.add_row(p)
         print(tabla)
-salida = AnalizadorLR1()
-salida.salidaDatos()
+#salida = AnalizadorLR1()
+#salida.salidaDatos()
         
         
         
