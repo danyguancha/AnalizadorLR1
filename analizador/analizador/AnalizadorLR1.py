@@ -13,15 +13,15 @@ class AnalizadorLR1:
         self.encabezadoTabla =[] # encabezado de la tabla
         self.entradasTabla =[] # almacenamos las filas de la tabla
         
-    def obtenerEntrada(self,datos):
+    def obtenerEntrada(self):
         
-        """ing1 =['S','C','C']
+        ing1 =['S','C','C']
         ing2 =['C','a','C']
         ing3 =['C','d']
         
         self.gramatica.append(ing1)
         self.gramatica.append(ing2)
-        self.gramatica.append(ing3)"""
+        self.gramatica.append(ing3)
      
         
         """#return self.gramatica
@@ -50,10 +50,19 @@ class AnalizadorLR1:
         self.gramatica.append(ing4)"""
         #self.gramatica = datos
         #print(self.gramatica)
-        self.gramatica=datos
-        print(self.gramatica)
-        return self.gramatica
         
+        
+        
+        #gui.mainloop()
+        
+        return self.gramatica
+    
+    def capturaDatos(self):
+        gui= ttk()
+        a = GUI(gui)
+        lista =[]
+        lista = a.obtenerEntrada()
+        return lista
     def primeraInterfaz(self,produccion):
         primero =[]
         
@@ -515,8 +524,8 @@ class AnalizadorLR1:
         for p in self.entradasTabla:
             tabla.add_row(p)
         print(tabla)
-#salida = AnalizadorLR1()
-#salida.salidaDatos()
+salida = AnalizadorLR1()
+salida.salidaDatos()
         
         
         

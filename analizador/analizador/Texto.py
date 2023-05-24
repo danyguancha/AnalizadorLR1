@@ -18,14 +18,14 @@ class GUI:
         self.arra =[]
         
         self.analiza = AnalizadorLR1()
-        #self.gram = self.analiza.obtenerEntrada([])
+        self.gram = self.analiza.obtenerEntrada()
         self.gram2 = self.analiza.agregarPunto()
         self.encabezado = self.analiza.crearEncabezadoTabla()
         self.primerNodo = self.analiza.crearPrimerNodo()
         self.arbol = self.analiza.crearArbol()
         self.entradasTabla = self.analiza.getEntradasTabla()
         self.nick = StringVar()
-        self.texto = []
+        
         
         # ================ Contenedor para los botones ================
         self.frameBtn = LabelFrame(self.window, text="Menu opciones",
@@ -38,7 +38,8 @@ class GUI:
                             font=("Arial", 15), background="lightgray")
         self.frame.place(x=10, y=290, width=575, height=360)
         
-
+        self.entradaGramatica = ScrolledText(self.window, wrap="word")
+        self.entradaGramatica.place(x=150, y=50, width=150, height=70)
         # =========== Botones para manipular la interfaz ==============
         
 
@@ -206,7 +207,7 @@ class GUI:
         dot.render('analizador/archivosSalida/analizadorLR1.gv', view=True)
         
     def obtenerEntrada(self):
-        contenido = entradaGramatica.get("1.0",END)
+        contenido = self.entradaGramatica.get("1.0",END)
         salida =contenido.split(',')
         retorno =[]
         for i in salida:
@@ -218,7 +219,7 @@ class GUI:
                 item_separado = list(item)
                 listaSeparada.append(item_separado)
             salida1.append(listaSeparada)
-        self.analiza.obtenerEntrada(salida1)
+        return salida1
                 
                 
             #return salida1
@@ -240,10 +241,6 @@ class GUI:
         insert_nick = Entry(self.frameBtn, width=20, textvariable=self.nick)
         insert_nick.place(x=320, y=130)
         
-        entradaGramatica = ScrolledText(self.window, wrap="word")
-        entradaGramatica.place(x=150, y=50, width=150, height=70)
-        
-        
         boton_nick = Button(self.frameBtn, text="Crear tabla", command=self.crearTabla)
         boton_nick.place(x=450, y=170)
         
@@ -260,6 +257,5 @@ if __name__ == "__main__":
     gui.configure(bg="orange")
     gui.resizable(False,False)
     app = GUI(gui)
-    app.obtenerEntrada()
     app.botones()
     gui.mainloop()
