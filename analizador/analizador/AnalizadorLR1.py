@@ -22,47 +22,22 @@ class AnalizadorLR1:
         self.gramatica.append(ing1)
         self.gramatica.append(ing2)
         self.gramatica.append(ing3)
-     
         
-        """#return self.gramatica
-        ing1 =['S', 'B', 'C']
-        ing2 =['S','D','A']
-        ing3 =['C', 'A', 'A']
-        ing4 =['B', 'b']
-        ing5 =['D', 'b', 'a']
-        ing6 =['A', 'a']
+        """ing1 =['S','B','C','|','D','A']
+        ing2 =['B','b']
+        ing3 =['C','A','A']
+        ing4 =['A','a']
+        ing5 =['D','b','a']
         
         self.gramatica.append(ing1)
         self.gramatica.append(ing2)
         self.gramatica.append(ing3)
-        
         self.gramatica.append(ing4)
-        self.gramatica.append(ing5)
-        self.gramatica.append(ing6)"""
-        
-        """ing1 =['S', 'C', 'D']
-        ing2 =['C','A','A']
-        ing3 =['A', 'a']
-        ing4 =['D', 'd']
-        self.gramatica.append(ing1)
-        self.gramatica.append(ing2)
-        self.gramatica.append(ing3)
-        self.gramatica.append(ing4)"""
-        #self.gramatica = datos
-        #print(self.gramatica)
-        
-        
-        
-        #gui.mainloop()
-        
+        self.gramatica.append(ing5)"""
+     
         return self.gramatica
     
-    def capturaDatos(self):
-        gui= ttk()
-        a = GUI(gui)
-        lista =[]
-        lista = a.obtenerEntrada()
-        return lista
+    
     def primeraInterfaz(self,produccion):
         primero =[]
         
@@ -95,6 +70,7 @@ class AnalizadorLR1:
         lista1.append(lista2)
         
         listaInicial:List[List[str]]=[]
+        
         #Ciclo externo que accede al producto individual de cada no terminal
         for i in lista1:
             #Ciclo interno accediendo al token individual de producción
@@ -117,15 +93,23 @@ class AnalizadorLR1:
                        continue
                     #Selección De Producción Para No Terminal
                     aux =[]
-                    
+                    term =[]
+                    primeroNoTerminal=[]
                     for g in self.gramatica:
                         if g[0]==j:
                             aux = g
                             #print(aux)
-                            break
+                            #break
+                            term.append(self.retornarPrimero(aux))
+                            #break
+                            
                     #Determinación del primero de los no terminales
-                    #print(aux)
-                    primeroNoTerminal = self.retornarPrimero(aux)
+                    #print(term)
+                    
+                    for i in term:
+                        primeroNoTerminal.append(i[0])
+                    
+                    #primeroNoTerminal = self.retornarPrimero(aux)
                    
                     #Agregar primero de no terminal a la primera lista
                     for c in primeroNoTerminal:
@@ -135,11 +119,11 @@ class AnalizadorLR1:
                         if c in listaInicial:
                             #print(c)
                             continue
-                        listaInicial.append(j)
+                        listaInicial.append(c)
                     #Si Epsilon no está en primeroNoTerminal, entonces primero busque paradas para la producción
                     if 'e' not in primeroNoTerminal:
                         break
-        #print(listaInicial)
+       
         return listaInicial
     
     
@@ -161,15 +145,21 @@ class AnalizadorLR1:
         lineaUno = self.gramaticaAumentada[0].copy()
         lineaUno.append(',')
         lineaUno.append('$')
-        lineaDos = self.gramaticaAumentada[1].copy()
-        lineaDos.append(',')
-        lineaDos.append('$')
+        
+        nodoActual = [lineaUno]
+        
+        for i in self.gramaticaAumentada:
+            if i[0] == 'S':
+                lineaDos = i.copy()
+                lineaDos.append(',')
+                lineaDos.append('$')
+                nodoActual.append(lineaDos)
         
         #Representar el nodo I0 en el árbol
-        nodoActual = [lineaUno, lineaDos]
+        
         #print(nodoActual)
         i = 1
-        salida =[]
+        
         while i < len(nodoActual):
             
             lineaActual = nodoActual[i]  # produccion actual
@@ -199,61 +189,21 @@ class AnalizadorLR1:
                     #print(a[0])
                     if a[0]==siguienteSimbolo:
                         aux = a.copy()
-                        
                         aux.append(',')
                        
-                        if 'a' in aux or 'd' in aux:
+                        """if 'a' in aux or 'd' in aux:
                             aux.append('a')
                             aux.append('d')
-                        else:
-                            for f in restoDePrimero:
-                                aux.append(f)
+                        else:"""
+                        for f in restoDePrimero:
+                            aux.append(f)
                         nodoActual.append(aux)
                         #print(nodoActual)
             
             i = i + 1
         self.nodos.append(nodoActual)    
         return self.nodos
-    """def crearPrimerNodo(self):
-        lineaUno = self.gramaticaAumentada[0].copy()
-        lineaUno.extend([',', '$'])
-        lineaDos = self.gramaticaAumentada[1].copy()
-        lineaDos.extend([',', '$'])
-        
-        nodoActual = [lineaUno, lineaDos]
-        i = 1
-        
-        while i < len(nodoActual):
-            lineaActual = nodoActual[i]
-            indiceDelPunto = lineaActual.index('.')
-            
-            if lineaActual[indiceDelPunto + 1] == ',':
-                continue
-            
-            primeraProd = lineaActual[indiceDelPunto + 2:]
-            primeraProd = [elem for elem in primeraProd if elem != ',']
-            
-            restoDePrimero = self.primeraInterfaz(primeraProd)
-            siguienteSimbolo = lineaActual[indiceDelPunto + 1]
-            aux = []
-            
-            if siguienteSimbolo.isupper():
-                for a in self.gramaticaAumentada:
-                    if a[0] == siguienteSimbolo:
-                        aux = a.copy()
-                        aux.extend([','])
-                        
-                        if 'a' in aux or 'd' in aux:
-                            aux.extend(['a', 'd'])
-                        else:
-                            aux.extend(restoDePrimero)
-                        
-                        nodoActual.append(aux)
-            
-            i += 1
-        
-        self.nodos.append(nodoActual)
-        return self.nodos"""
+    
 
     
     def cambioDelPunto(self, produccion):
@@ -438,72 +388,7 @@ class AnalizadorLR1:
                 j = j + 1
             i = i +1
         return self.nodos
-    """def crearArbol(self):
-        indiceUltimoNodo = len(self.nodos)
     
-        for i in range(len(self.nodos)):
-            nodoActual = self.nodos[i]
-            
-            for j in range(len(nodoActual)):
-                produccionNueva = nodoActual[j]
-                indicePunto = produccionNueva.index('.')
-                caracDerPunto = produccionNueva[indicePunto + 1]
-                
-                if caracDerPunto == ',':
-                    self.actualizarNodoFinalTabla(produccionNueva, i)
-                    continue
-                
-                produccionSig = self.cambioDelPunto(produccionNueva)
-                existe = False
-                indiceNodo = -1
-                
-                for z in range(len(self.nodos)):
-                    n = self.nodos[z]
-                    if all(m == k for m, k in zip(produccionSig, n[0])):
-                        indiceNodo = z
-                        existe = True
-                
-                if existe:
-                    self.actualizarTabla(produccionSig, caracDerPunto, i, indiceNodo)
-                    continue
-                
-                nuevoNodo = [produccionSig]
-                indicePunto = nuevoNodo[0].index('.')
-                
-                if nuevoNodo[0][indicePunto + 1] == ',':
-                    self.nodos.append(nuevoNodo)
-                    self.actualizarTabla(produccionSig, caracDerPunto, i, indiceUltimoNodo)
-                    indiceUltimoNodo += 1
-                    continue
-                
-                primeraProd = nuevoNodo[0][indicePunto + 2:]
-                
-                k = 0
-                while k < len(primeraProd):
-                    if primeraProd[k] == ',':
-                        primeraProd.pop(k)
-                    else:
-                        k += 1
-                
-                restoPrimero = self.primeraInterfaz(primeraProd)
-                if len(restoPrimero) == 0:
-                    restoPrimero = ['$']
-                
-                simboloSig = nuevoNodo[0][indicePunto + 1]
-                
-                if simboloSig.isupper():
-                    for a in self.gramaticaAumentada:
-                        if a[0] == simboloSig:
-                            aux = a.copy()
-                            aux.append(',')
-                            aux.extend(restoPrimero)
-                            nuevoNodo.append(aux)
-                
-                self.nodos.append(nuevoNodo)
-                self.actualizarTabla(produccionSig, caracDerPunto, i, indiceUltimoNodo)
-                indiceUltimoNodo += 1
-        
-        return self.nodos"""
 
     
     def getEntradasTabla(self):
